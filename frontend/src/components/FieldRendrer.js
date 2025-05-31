@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef, useEffect, memo } from "react";
 
 const defaultInputStyles = {
   backgroundColor: "rgb(17 24 39)",
@@ -12,19 +12,25 @@ const defaultInputStyles = {
 };
 
 // AutoResizeTextarea component
-const AutoResizeTextarea = React.memo(({ value, onChange, field }) => {
-  const textareaRef = React.useRef(null);
+const AutoResizeTextarea = memo(({ value, onChange, field }) => {
+  const textareaRef = useRef(null);
 
-  React.useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = `${scrollHeight}px`;
-      if (field.onResize) {
-        field.onResize(scrollHeight);
-      }
+  const adjustHeight = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    textarea.style.height = "auto";
+    const height = textarea.scrollHeight;
+    textarea.style.height = height + "px";
+
+    if (field.onResize) {
+      field.onResize(height);
     }
-  }, [value, field]);
+  }, [field]);
+
+  useEffect(() => {
+    adjustHeight();
+  }, [value, adjustHeight]);
 
   return (
     <textarea
@@ -39,7 +45,6 @@ const AutoResizeTextarea = React.memo(({ value, onChange, field }) => {
         maxHeight: "300px",
         resize: "none",
         overflow: "hidden",
-        transition: "height 0.1s ease",
         ...field.inputStyle,
       }}
     />

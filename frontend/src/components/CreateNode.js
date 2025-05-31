@@ -5,7 +5,6 @@ export const createNode = (config) => {
   return ({ id, data }) => {
     // For enhanced text node, we need to modify the config dynamically
     if (config.enhanced) {
-      console.log(config);
       return <EnhancedTextNode id={id} data={data} config={config} />;
     }
     return <BaseNode id={id} data={data} config={config} />;

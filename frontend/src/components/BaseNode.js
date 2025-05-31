@@ -1,5 +1,5 @@
 // baseNode.js
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Handle, Position } from "reactflow";
 import { FieldRenderer } from "./FieldRendrer";
 
@@ -89,7 +89,6 @@ export const BaseNode = ({ id, data, config }) => {
       );
     });
 
-    console.log("configHandles", config.inputs, config.outputs);
     return handles;
   };
 
@@ -211,118 +210,139 @@ export const EnhancedTextNode = ({ id, data, config }) => {
     height: "auto",
   });
 
-  // Extract variables from text (e.g., {{variable_name}})
-  const extractVariables = (text) => {
+  const extractVariables = useCallback((text) => {
     if (!text) return [];
     const variableRegex = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\}\}/g;
-    const variables = [];
+    const variables = new Set();
     let match;
-
     while ((match = variableRegex.exec(text)) !== null) {
-      const varName = match[1].trim();
-      if (!variables.includes(varName)) {
-        variables.push(varName);
-      }
+      variables.add(match[1].trim());
     }
-    return variables;
-  };
-  // Custom onChange handler for text field
-  const handleTextChange = (value, newState, setNodeState) => {
-    const variables = extractVariables(value);
-    // Only update dynamic inputs if the variables have actually changed
-    const hasInputsChanged =
-      JSON.stringify(variables) !==
-      JSON.stringify(dynamicInputs.map((i) => i.id));
-    if (hasInputsChanged) {
-      const newInputs = variables.map((varName) => ({
-        id: varName,
-        label: varName,
-        style: {
-          backgroundColor: "#60a5fa", // Blue color for variable inputs
-          border: "3px solid rgb(31 41 55)",
-        },
-      }));
-      setDynamicInputs(newInputs);
-    }
-  };
+    return Array.from(variables);
+  }, []);
 
-  // Handle textarea resize
-  const handleResize = (height) => {
-    // Account for padding, header, and variables list
-    const headerHeight = 40; // title + padding
-    const extraPadding = 40; // top + bottom padding
-    const variablesHeight = dynamicInputs.length > 0 ? 44 : 0;
-    const totalExtraHeight = headerHeight + extraPadding + variablesHeight;
-
-    const newHeight = Math.min(400, Math.max(140, height + totalExtraHeight));
-    setNodeSize((prev) => ({
-      ...prev,
-      height: newHeight,
-    }));
-  };
-
-  const enhancedConfig = {
-    ...config,
-    inputs: [...(config.inputs || []), ...dynamicInputs],
-    width: nodeSize.width,
-    height: nodeSize.height,
-    fields: config.fields?.map((field) => {
-      if (field.key === "text") {
-        return {
-          ...field,
-          onChange: handleTextChange,
-          onResize: handleResize,
-          inputStyle: {
-            width: "100%",
-            minHeight: "80px",
-            maxHeight: "320px",
-            resize: "none",
-            fontSize: "13px",
-            lineHeight: "1.4",
-            fontFamily:
-              "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace",
-            ...field.inputStyle,
-          },
-        };
-      }
-      return field;
-    }),
-    afterFields: ({ nodeState }) => {
-      if (dynamicInputs.length > 0) {
-        return (
-          <div
-            style={{
-              fontSize: "11px",
-              color: "#94a3b8",
-              marginTop: "8px",
-              padding: "4px 6px",
-              backgroundColor: "rgba(0,0,0,0.2)",
-              borderRadius: "4px",
-              display: "flex",
-              gap: "4px",
-              flexWrap: "wrap",
-            }}
-          >
-            {dynamicInputs.map((input) => (
-              <span
-                key={input.id}
-                style={{
-                  backgroundColor: "rgba(96,165,250,0.1)",
-                  border: "1px solid rgba(96,165,250,0.2)",
-                  padding: "1px 6px",
-                  borderRadius: "4px",
-                  fontSize: "10px",
-                }}
-              >
-                {input.id}
-              </span>
-            ))}
-          </div>
-        );
-      }
-      return null;
+  const handleTextChange = useCallback(
+    (value) => {
+      const variables = extractVariables(value);
+      setDynamicInputs((prevInputs) => {
+        const currentVars = prevInputs.map((i) => i.id);
+        if (
+          JSON.stringify(variables.sort()) !==
+          JSON.stringify(currentVars.sort())
+        ) {
+          return variables.map((varName) => ({
+            id: varName,
+            label: varName,
+            style: {
+              backgroundColor: "#60a5fa",
+              border: "3px solid rgb(31 41 55)",
+            },
+          }));
+        }
+        return prevInputs;
+      });
     },
-  };
+    [extractVariables]
+  );
+
+  const handleResize = useCallback(
+    (height) => {
+      requestAnimationFrame(() => {
+        const baseHeight = 32; // Title
+        const headerMargin = 12; // Header margin
+        const labelHeight = 20; // Label
+        const padding = 24; // Node padding
+        const variablesHeight = dynamicInputs.length ? 44 : 0;
+        const margins = 16; // Extra margins
+
+        const totalHeight =
+          baseHeight +
+          headerMargin +
+          labelHeight +
+          height +
+          padding +
+          variablesHeight +
+          margins;
+
+        setNodeSize((prev) => {
+          const newHeight = Math.min(400, Math.max(140, totalHeight));
+          if (prev.height !== newHeight) {
+            return { ...prev, height: newHeight };
+          }
+          return prev;
+        });
+      });
+    },
+    [dynamicInputs.length]
+  );
+
+  const enhancedConfig = useMemo(
+    () => ({
+      ...config,
+      inputs: [...(config.inputs || []), ...dynamicInputs],
+      width: nodeSize.width,
+      height: nodeSize.height,
+      fields: config.fields?.map((field) => {
+        if (field.key === "text") {
+          return {
+            ...field,
+            onChange: handleTextChange,
+            onResize: handleResize,
+            inputStyle: {
+              width: "100%",
+              minHeight: "60px",
+              maxHeight: "280px",
+              resize: "none",
+              overflow: "hidden",
+              fontSize: "13px",
+              lineHeight: "1.4",
+              padding: "8px",
+              fontFamily:
+                "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+              ...field.inputStyle,
+            },
+          };
+        }
+        return field;
+      }),
+      afterFields: ({ nodeState }) => {
+        if (dynamicInputs.length > 0) {
+          return (
+            <div
+              style={{
+                fontSize: "11px",
+                color: "#94a3b8",
+                marginTop: "8px",
+                padding: "4px 6px",
+                backgroundColor: "rgba(0,0,0,0.2)",
+                borderRadius: "4px",
+                display: "flex",
+                gap: "4px",
+                flexWrap: "wrap",
+              }}
+            >
+              {dynamicInputs.map((input) => (
+                <span
+                  key={input.id}
+                  style={{
+                    backgroundColor: "rgba(96,165,250,0.1)",
+                    border: "1px solid rgba(96,165,250,0.2)",
+                    padding: "1px 6px",
+                    borderRadius: "4px",
+                    fontSize: "10px",
+                  }}
+                >
+                  {input.id}
+                </span>
+              ))}
+            </div>
+          );
+        }
+        return null;
+      },
+    }),
+    [config, nodeSize, dynamicInputs, handleTextChange, handleResize]
+  );
 
   return <BaseNode id={id} data={data} config={enhancedConfig} />;
 };

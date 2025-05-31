@@ -99,6 +99,8 @@ const nodeConfigs = {
     border: "1px solid rgb(55 65 81)",
     borderRadius: "8px",
     headerColor: "#fff",
+    padding: "12px",
+    minHeight: 140,
     headerStyle: {
       fontSize: "14px",
       paddingBottom: "8px",
@@ -110,13 +112,25 @@ const nodeConfigs = {
         key: "text",
         label: "Content",
         type: "textarea",
-        rows: 4,
+        rows: 3,
         placeholder: "Enter text with variables like {{variableName}}",
+        marginBottom: "8px",
+        labelStyle: {
+          color: "rgb(209 213 219)",
+          marginBottom: "4px",
+          fontSize: "12px",
+        },
         inputStyle: {
           backgroundColor: "rgb(17 24 39)",
           border: "1px solid rgb(55 65 81)",
           borderRadius: "4px",
           color: "rgb(209 213 219)",
+          fontSize: "13px",
+          lineHeight: "1.4",
+          padding: "8px",
+          fontFamily:
+            "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+          minHeight: "60px",
         },
       },
     ],
@@ -129,8 +143,6 @@ const extraNodesConfigs = {
     title: "Calculator",
     icon: "🧮",
     width: 220,
-    backgroundColor: "#ffe8e8",
-    border: "1px solid #d32f2f",
     borderRadius: "8px",
     fields: [
       {
@@ -153,8 +165,6 @@ const extraNodesConfigs = {
     title: "Filter",
     icon: "🔍",
     width: 240,
-    backgroundColor: "#f3e5f5",
-    border: "1px solid #7b1fa2",
     borderRadius: "8px",
     fields: [
       {
@@ -189,8 +199,6 @@ const extraNodesConfigs = {
     title: "Data Transformer",
     icon: "🔄",
     width: 260,
-    backgroundColor: "#e8f5e8",
-    border: "1px solid #2e7d32",
     borderRadius: "8px",
     fields: [
       {
@@ -228,8 +236,6 @@ const extraNodesConfigs = {
     title: "Conditional",
     icon: "🔀",
     width: 280,
-    backgroundColor: "#fff3e0",
-    border: "1px solid #f57c00",
     borderRadius: "8px",
     fields: [
       {
@@ -265,8 +271,6 @@ const extraNodesConfigs = {
     title: "JSON Parser",
     icon: "📋",
     width: 250,
-    backgroundColor: "#e1f5fe",
-    border: "1px solid #0277bd",
     borderRadius: "8px",
     fields: [
       {
@@ -300,8 +304,6 @@ const extraNodesConfigs = {
     title: "Counter",
     icon: "🔢",
     width: 220,
-    backgroundColor: "#fce4ec",
-    border: "1px solid #c2185b",
     borderRadius: "8px",
     fields: [
       {
