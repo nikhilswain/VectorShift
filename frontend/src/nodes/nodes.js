@@ -69,16 +69,19 @@ const nodeConfigs = {
 
   text: {
     title: "Text",
+    enhanced: true,
     width: 200,
-    height: 80,
+    height: 120,
     backgroundColor: "white",
     border: "1px solid black",
     fields: [
       {
         key: "text",
         label: "Text",
-        type: "text",
+        type: "textarea",
         defaultValue: "{{input}}",
+        rows: 5,
+        placeholder: "Enter text with variables like {{input}}",
       },
     ],
     outputs: [{ id: "output" }],

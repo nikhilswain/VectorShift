@@ -78,6 +78,7 @@ export const BaseNode = ({ id, data, config }) => {
       );
     });
 
+    console.log("configHandles", config.inputs, config.outputs);
     return handles;
   };
 
@@ -187,4 +188,106 @@ export const BaseNode = ({ id, data, config }) => {
       )}
     </div>
   );
+};
+
+// enhanced Text Node component that extends BaseNode functionality
+export const EnhancedTextNode = ({ id, data, config }) => {
+  const [dynamicInputs, setDynamicInputs] = useState([]);
+  const [nodeSize, setNodeSize] = useState({
+    width: config.width || 200,
+    height: config.height || 80,
+  });
+
+  // Extract variables from text (e.g., {{variable_name}})
+  const extractVariables = (text) => {
+    if (!text) return [];
+    const variableRegex = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\}\}/g;
+    const variables = [];
+    let match;
+
+    while ((match = variableRegex.exec(text)) !== null) {
+      const varName = match[1].trim();
+      if (!variables.includes(varName)) {
+        variables.push(varName);
+      }
+    }
+    return variables;
+  };
+
+  // Custom onChange handler for text field
+  const handleTextChange = (value, newState, setNodeState) => {
+    const variables = extractVariables(value);
+    const newInputs = variables.map((varName) => ({
+      id: varName,
+      label: varName,
+    }));
+    setDynamicInputs(newInputs);
+
+    // Calculate dynamic size
+    const lines = (value || "").split("\n");
+    const longestLine = lines.reduce(
+      (a, b) => (a.length > b.length ? a : b),
+      ""
+    );
+    const charWidth = 8;
+    const minWidth = 200;
+    const maxWidth = 600;
+    const calculatedWidth = Math.min(
+      maxWidth,
+      Math.max(minWidth, longestLine.length * charWidth + 40)
+    );
+
+    const lineHeight = 20;
+    const minHeight = 100;
+    const maxHeight = 400;
+    const calculatedHeight = Math.min(
+      maxHeight,
+      Math.max(minHeight, lines.length * lineHeight + 80)
+    );
+
+    setNodeSize({
+      width: calculatedWidth,
+      height: calculatedHeight,
+    });
+  };
+
+  const enhancedConfig = {
+    ...config,
+    inputs: [...(config.inputs || []), ...dynamicInputs],
+    width: nodeSize.width,
+    height: nodeSize.height,
+    fields: config.fields?.map((field) => {
+      if (field.key === "text") {
+        return {
+          ...field,
+          onChange: handleTextChange,
+          inputStyle: {
+            width: "100%",
+            minHeight: "60px",
+            resize: "none",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            padding: "4px",
+            fontSize: "12px",
+            fontFamily: "monospace",
+            ...field.inputStyle,
+          },
+        };
+      }
+      return field;
+    }),
+    afterFields: ({ nodeState }) => {
+      if (dynamicInputs.length > 0) {
+        return (
+          <div style={{ fontSize: "10px", color: "#666", marginTop: "4px" }}>
+            Variables: {dynamicInputs.map((input) => input.id).join(", ")}
+          </div>
+        );
+      }
+      return null;
+    },
+  };
+
+  console.log("enhancedConfig", enhancedConfig);
+  return <BaseNode id={id} data={data} config={enhancedConfig} />;
 };
