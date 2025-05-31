@@ -1,12 +1,14 @@
-import { PipelineToolbar } from './toolbar';
-import { PipelineUI } from './ui';
-import { SubmitButton } from './submit';
+import { PipelineToolbar } from "./toolbar";
+import { PipelineUI } from "./ui";
+import { SubmitButton } from "./submit";
 
 function App() {
   return (
-    <div>
+    <div className="h-screen flex flex-col bg-gray-950">
       <PipelineToolbar />
-      <PipelineUI />
+      <main className="flex-1 overflow-hidden relative">
+        <PipelineUI />
+      </main>
       <SubmitButton />
     </div>
   );

@@ -103,10 +103,9 @@ export const PipelineUI = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
-
   return (
-    <>
-      <div ref={reactFlowWrapper} style={{ width: "100wv", height: "70vh" }}>
+    <div className="absolute inset-0 bg-gray-950">
+      <div ref={reactFlowWrapper} className="w-full h-full">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -120,12 +119,32 @@ export const PipelineUI = () => {
           proOptions={proOptions}
           snapGrid={[gridSize, gridSize]}
           connectionLineType="smoothstep"
+          className="bg-gray-900"
         >
-          <Background color="#aaa" gap={gridSize} />
-          <Controls />
-          <MiniMap />
+          <Background
+            color="#374151"
+            gap={gridSize}
+            size={1.5}
+            className="bg-gray-900"
+          />
+          <Controls className="bg-gray-800 border border-gray-700 rounded-lg shadow-xl" />
+          <MiniMap
+            className="bg-gray-800 border border-gray-700 rounded-lg shadow-xl"
+            nodeColor={(node) => {
+              switch (node.type) {
+                case "customInput":
+                  return "#60A5FA";
+                case "llm":
+                  return "#34D399";
+                case "customOutput":
+                  return "#F87171";
+                default:
+                  return "#6B7280";
+              }
+            }}
+          />
         </ReactFlow>
       </div>
-    </>
+    </div>
   );
 };

@@ -1,6 +1,51 @@
 import React from "react";
 
-// fields
+const defaultInputStyles = {
+  backgroundColor: "rgb(17 24 39)",
+  border: "1px solid rgb(55 65 81)",
+  borderRadius: "4px",
+  color: "white",
+  fontSize: "0.875rem",
+  padding: "4px 8px",
+  width: "100%",
+  outline: "none",
+};
+
+// AutoResizeTextarea component
+const AutoResizeTextarea = React.memo(({ value, onChange, field }) => {
+  const textareaRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = `${scrollHeight}px`;
+      if (field.onResize) {
+        field.onResize(scrollHeight);
+      }
+    }
+  }, [value, field]);
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={value || ""}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={field.placeholder}
+      rows={field.rows || 3}
+      style={{
+        ...defaultInputStyles,
+        minHeight: "60px",
+        maxHeight: "300px",
+        resize: "none",
+        overflow: "hidden",
+        transition: "height 0.1s ease",
+        ...field.inputStyle,
+      }}
+    />
+  );
+});
+
 const Fields = {
   text: ({ value, onChange, field }) => (
     <input
@@ -8,25 +53,22 @@ const Fields = {
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       placeholder={field.placeholder}
-      style={field.inputStyle}
+      style={{ ...defaultInputStyles, ...field.inputStyle }}
     />
   ),
 
-  textarea: ({ value, onChange, field }) => (
-    <textarea
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={field.placeholder}
-      rows={field.rows || 2}
-      style={field.inputStyle}
-    />
-  ),
+  textarea: (props) => <AutoResizeTextarea {...props} />, // Use AutoResizeTextarea component
 
   select: ({ value, onChange, field }) => (
     <select
       value={value || field.defaultValue}
       onChange={(e) => onChange(e.target.value)}
-      style={field.inputStyle}
+      style={{
+        ...defaultInputStyles,
+        appearance: "none",
+        paddingRight: "24px",
+        ...field.inputStyle,
+      }}
     >
       {field.options?.map((option) => (
         <option key={option.value} value={option.value}>
@@ -44,7 +86,7 @@ const Fields = {
       min={field.min}
       max={field.max}
       step={field.step}
-      style={field.inputStyle}
+      style={{ ...defaultInputStyles, ...field.inputStyle }}
     />
   ),
 
@@ -84,7 +126,7 @@ const Fields = {
   ),
 };
 
-// main field renderer
+// Main field renderer
 export const FieldRenderer = ({
   field,
   value,
@@ -92,7 +134,6 @@ export const FieldRenderer = ({
   nodeState,
   setNodeState,
 }) => {
-  // Use default field components
   const FieldComponent = Fields[field.type];
   if (!FieldComponent) {
     console.warn(`Unknown field type: ${field.type}`);
