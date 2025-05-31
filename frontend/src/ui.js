@@ -59,44 +59,52 @@ export const PipelineUI = () => {
     onConnect,
   } = useStore(selector, shallow);
 
-  const getInitNodeData = (nodeID, type) => {
-    let nodeData = { id: nodeID, nodeType: `${type}` };
-    return nodeData;
-  };
+  const getInitNodeData = useCallback((nodeID, type) => {
+    return { id: nodeID, nodeType: `${type}` };
+  }, []);
 
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
 
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-      if (event?.dataTransfer?.getData("application/reactflow")) {
+      if (
+        !event?.dataTransfer?.getData("application/reactflow") ||
+        !reactFlowInstance
+      ) {
+        return;
+      }
+
+      try {
         const appData = JSON.parse(
           event.dataTransfer.getData("application/reactflow")
         );
         const type = appData?.nodeType;
 
-        // check if the dropped element is valid
-        if (typeof type === "undefined" || !type) {
-          return;
-        }
-
+        if (!type) return; // Get drop position in the viewport and convert to flow coordinates
         const position = reactFlowInstance.project({
           x: event.clientX - reactFlowBounds.left,
           y: event.clientY - reactFlowBounds.top,
         });
 
+        // Create and add the new node
         const nodeID = getNodeID(type);
         const newNode = {
           id: nodeID,
           type,
-          position,
+          position: {
+            x: Math.round(position.x / 20) * 20,
+            y: Math.round(position.y / 20) * 20,
+          },
           data: getInitNodeData(nodeID, type),
         };
 
         addNode(newNode);
+      } catch (error) {
+        console.error("Error adding node:", error);
       }
     },
-    [reactFlowInstance]
+    [reactFlowInstance, getNodeID, addNode, getInitNodeData]
   );
 
   const onDragOver = useCallback((event) => {

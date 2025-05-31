@@ -7,8 +7,8 @@ import {
   FiHash,
   FiFilter,
   FiEdit2,
-  FiGitBranch,
   FiCode,
+  FiBox,
 } from "react-icons/fi";
 
 export const PipelineToolbar = () => {
@@ -22,52 +22,52 @@ export const PipelineToolbar = () => {
           <DraggableNode
             type="customInput"
             label="Input"
-            icon={<FiDatabase className="w-5 h-5" />}
+            icon={<FiDatabase className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="llm"
             label="LLM"
-            icon={<FiCpu className="w-5 h-5" />}
+            icon={<FiCpu className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="customOutput"
             label="Output"
-            icon={<FiTerminal className="w-5 h-5" />}
+            icon={<FiTerminal className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="text"
             label="Text"
-            icon={<FiType className="w-5 h-5" />}
+            icon={<FiType className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="calculator"
             label="Calculator"
-            icon={<FiHash className="w-5 h-5" />}
+            icon={<FiHash className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="filter"
             label="Filter"
-            icon={<FiFilter className="w-5 h-5" />}
+            icon={<FiFilter className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="transformer"
             label="Transformer"
-            icon={<FiEdit2 className="w-5 h-5" />}
+            icon={<FiEdit2 className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="conditional"
             label="Conditional"
-            icon={<FiGitBranch className="w-5 h-5" />}
+            icon={<FiBox className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="jsonParse"
             label="Json Parser"
-            icon={<FiCode className="w-5 h-5" />}
+            icon={<FiCode className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="counter"
             label="Counter"
-            icon={<FiHash className="w-5 h-5 rotate-90" />}
+            icon={<FiHash className="w-5 h-5 mb-1" />}
           />
         </div>
       </div>
