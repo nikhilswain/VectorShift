@@ -1,6 +1,7 @@
 // store.js
 
 import { create } from "zustand";
+import axios from "axios";
 import {
     addEdge,
     applyNodeChanges,
@@ -50,5 +51,24 @@ export const useStore = create((set, get) => ({
           return node;
         }),
       });
+    },
+    submitPipeline: async () => {
+      try {
+        const response = await axios.post('http://localhost:8000/pipelines/parse', {
+          nodes: get().nodes,
+          edges: get().edges,
+        });
+        
+        return {
+          success: true,
+          data: response.data
+        };
+      } catch (error) {
+        console.error('Error submitting pipeline:', error);
+        return {
+          success: false,
+          error: error.message || 'Failed to submit pipeline'
+        };
+      }
     },
   }));
