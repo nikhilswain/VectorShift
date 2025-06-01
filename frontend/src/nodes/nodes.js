@@ -30,12 +30,6 @@ const nodeConfigs = {
     backgroundColor: "rgb(31 41 55)",
     border: "1px solid rgb(55 65 81)",
     borderRadius: "8px",
-    descriptionStyle: {
-      color: "rgb(156 163 175)",
-      fontSize: "12px",
-      marginTop: "-8px",
-      marginBottom: "12px",
-    },
     inputs: [{ id: "system" }, { id: "prompt" }],
     outputs: [{ id: "response" }],
   },

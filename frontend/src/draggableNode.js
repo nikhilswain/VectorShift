@@ -21,9 +21,8 @@ export const DraggableNode = ({ type, label, icon }) => {
           {icon}
         </div>
 
-        {/* Tooltip */}
-        <div className="hidden group-hover:block absolute left-1/2 top-full mt-2 -translate-x-1/2 pointer-events-none z-[1000]">
-          <div className="bg-gray-800 text-white text-xs px-3 py-1.5 rounded-md shadow-xl whitespace-nowrap border border-gray-700/50 backdrop-blur-sm">
+        <div className="hidden group-hover:block absolute right-full top-1/2 -translate-y-1/2 mr-2 pointer-events-none z-[100]">
+          <div className="bg-gray-600 text-white text-xs px-3 py-1.5 rounded-md shadow-xl whitespace-nowrap border border-gray-700/50 backdrop-blur-sm">
             {label}
           </div>
         </div>

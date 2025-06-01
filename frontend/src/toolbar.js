@@ -1,15 +1,8 @@
 import { DraggableNode } from "./draggableNode";
-import {
-  FiDatabase,
-  FiCpu,
-  FiTerminal,
-  FiType,
-  FiHash,
-  FiFilter,
-  FiEdit2,
-  FiCode,
-  FiBox,
-} from "react-icons/fi";
+import { FiCpu, FiType, FiHash, FiFilter, FiCode, FiBox } from "react-icons/fi";
+import { MdInput, MdOutlineOutput, MdOutlineTransform } from "react-icons/md";
+import { ImCalculator } from "react-icons/im";
+import { VscDebugPause } from "react-icons/vsc";
 
 export const PipelineToolbar = () => {
   return (
@@ -22,7 +15,7 @@ export const PipelineToolbar = () => {
           <DraggableNode
             type="customInput"
             label="Input"
-            icon={<FiDatabase className="w-5 h-5 mb-1" />}
+            icon={<MdInput className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="llm"
@@ -32,7 +25,7 @@ export const PipelineToolbar = () => {
           <DraggableNode
             type="customOutput"
             label="Output"
-            icon={<FiTerminal className="w-5 h-5 mb-1" />}
+            icon={<MdOutlineOutput className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="text"
@@ -42,7 +35,7 @@ export const PipelineToolbar = () => {
           <DraggableNode
             type="calculator"
             label="Calculator"
-            icon={<FiHash className="w-5 h-5 mb-1" />}
+            icon={<ImCalculator className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="filter"
@@ -52,12 +45,12 @@ export const PipelineToolbar = () => {
           <DraggableNode
             type="transformer"
             label="Transformer"
-            icon={<FiEdit2 className="w-5 h-5 mb-1" />}
+            icon={<MdOutlineTransform className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="conditional"
             label="Conditional"
-            icon={<FiBox className="w-5 h-5 mb-1" />}
+            icon={<VscDebugPause className="w-5 h-5 mb-1" />}
           />
           <DraggableNode
             type="jsonParse"

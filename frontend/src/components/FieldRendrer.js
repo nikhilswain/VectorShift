@@ -46,7 +46,9 @@ const Fields = {
       className="bg-gray-900 border border-gray-700 rounded text-white text-sm px-2 py-1 w-full outline-none"
       type="text"
       value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => {
+        onChange(e.target.value);
+      }}
       placeholder={field.placeholder}
       style={{ ...field.inputStyle }}
     />
