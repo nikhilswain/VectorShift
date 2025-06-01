@@ -5,6 +5,7 @@ import { createNode } from "../components/CreateNode";
 const nodeConfigs = {
   input: {
     title: "Input",
+    className: "bg-pink-800",
     fields: [
       {
         key: "inputName",

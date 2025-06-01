@@ -189,8 +189,6 @@ export const EnhancedTextNode = ({ id, data, config }) => {
         setDynamicInputs(newInputs);
         // Force ReactFlow to update node internals after state change
         setTimeout(() => updateNodeInternals(id), 0);
-        sessionStorage.setItem("nodesChanged", "true");
-        sessionStorage.setItem("nodesChanged", "false");
       }
     } else if (dynamicInputs.length > 0) {
       setDynamicInputs([]);

@@ -117,6 +117,7 @@ export const PipelineUI = () => {
       <div ref={reactFlowWrapper} className="w-full h-full">
         <ReactFlow
           key={`${nodes.length}-${edges.length}`}
+          fitView
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
