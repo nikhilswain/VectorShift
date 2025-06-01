@@ -1,8 +1,21 @@
 import { DraggableNode } from "./draggableNode";
-import { FiCpu, FiType, FiHash, FiFilter, FiCode, FiBox } from "react-icons/fi";
+import { FiCpu, FiType, FiHash, FiFilter, FiCode } from "react-icons/fi";
 import { MdInput, MdOutlineOutput, MdOutlineTransform } from "react-icons/md";
 import { ImCalculator } from "react-icons/im";
 import { VscDebugPause } from "react-icons/vsc";
+
+const COMPONENTS = [
+  { type: "customInput", label: "Input", icon: MdInput },
+  { type: "llm", label: "LLM", icon: FiCpu },
+  { type: "customOutput", label: "Output", icon: MdOutlineOutput },
+  { type: "text", label: "Text", icon: FiType },
+  { type: "calculator", label: "Calculator", icon: ImCalculator },
+  { type: "filter", label: "Filter", icon: FiFilter },
+  { type: "transformer", label: "Transformer", icon: MdOutlineTransform },
+  { type: "conditional", label: "Conditional", icon: VscDebugPause },
+  { type: "jsonParse", label: "Json Parser", icon: FiCode },
+  { type: "counter", label: "Counter", icon: FiHash },
+];
 
 export const PipelineToolbar = () => {
   return (
@@ -12,56 +25,14 @@ export const PipelineToolbar = () => {
           Components
         </div>
         <div className="flex items-center space-x-3">
-          <DraggableNode
-            type="customInput"
-            label="Input"
-            icon={<MdInput className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="llm"
-            label="LLM"
-            icon={<FiCpu className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="customOutput"
-            label="Output"
-            icon={<MdOutlineOutput className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="text"
-            label="Text"
-            icon={<FiType className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="calculator"
-            label="Calculator"
-            icon={<ImCalculator className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="filter"
-            label="Filter"
-            icon={<FiFilter className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="transformer"
-            label="Transformer"
-            icon={<MdOutlineTransform className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="conditional"
-            label="Conditional"
-            icon={<VscDebugPause className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="jsonParse"
-            label="Json Parser"
-            icon={<FiCode className="w-5 h-5 mb-1" />}
-          />
-          <DraggableNode
-            type="counter"
-            label="Counter"
-            icon={<FiHash className="w-5 h-5 mb-1" />}
-          />
+          {COMPONENTS.map(({ type, label, icon: Icon }) => (
+            <DraggableNode
+              key={type}
+              type={type}
+              label={label}
+              icon={<Icon className="w-5 h-5 mb-1" />}
+            />
+          ))}
         </div>
       </div>
     </div>

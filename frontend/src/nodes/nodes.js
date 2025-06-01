@@ -5,7 +5,6 @@ import { createNode } from "../components/CreateNode";
 const nodeConfigs = {
   input: {
     title: "Input",
-    className: "bg-pink-800",
     fields: [
       {
         key: "inputName",
@@ -29,7 +28,6 @@ const nodeConfigs = {
   llm: {
     title: "LLM",
     description: "This is a LLM.",
-    backgroundColor: "rgb(31 41 55)",
     border: "1px solid rgb(55 65 81)",
     borderRadius: "8px",
     inputs: [{ id: "system" }, { id: "prompt" }],

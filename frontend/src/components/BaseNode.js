@@ -214,7 +214,6 @@ export const EnhancedTextNode = ({ id, data, config }) => {
           },
         }));
 
-        // Check if inputs changed before updating (compare sorted arrays)
         const currentIds = dynamicInputs.map((input) => input.id).sort();
         const newIds = sortedVariables;
         const inputsChanged =
@@ -233,12 +232,12 @@ export const EnhancedTextNode = ({ id, data, config }) => {
   const handleResize = useCallback(
     (height) => {
       requestAnimationFrame(() => {
-        const baseHeight = 32; // Title
-        const headerMargin = 12; // Header margin
-        const labelHeight = 20; // Label
-        const padding = 24; // Node padding
+        const baseHeight = 32;
+        const headerMargin = 12;
+        const labelHeight = 20;
+        const padding = 24;
         const variablesHeight = dynamicInputs.length ? 44 : 0;
-        const margins = 16; // Extra margins
+        const margins = 16;
 
         const totalHeight =
           baseHeight +
