@@ -1,16 +1,5 @@
 import React, { useCallback, useRef, useEffect, memo } from "react";
 
-const defaultInputStyles = {
-  backgroundColor: "rgb(17 24 39)",
-  border: "1px solid rgb(55 65 81)",
-  borderRadius: "4px",
-  color: "white",
-  fontSize: "0.875rem",
-  padding: "4px 8px",
-  width: "100%",
-  outline: "none",
-};
-
 // AutoResizeTextarea component
 const AutoResizeTextarea = memo(({ value, onChange, field }) => {
   const textareaRef = useRef(null);
@@ -34,13 +23,13 @@ const AutoResizeTextarea = memo(({ value, onChange, field }) => {
 
   return (
     <textarea
+      className="bg-gray-900 border border-gray-700 rounded text-white text-sm px-2 py-1 w-full outline-none"
       ref={textareaRef}
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       placeholder={field.placeholder}
       rows={field.rows || 3}
       style={{
-        ...defaultInputStyles,
         minHeight: "60px",
         maxHeight: "300px",
         resize: "none",
@@ -54,11 +43,12 @@ const AutoResizeTextarea = memo(({ value, onChange, field }) => {
 const Fields = {
   text: ({ value, onChange, field }) => (
     <input
+      className="bg-gray-900 border border-gray-700 rounded text-white text-sm px-2 py-1 w-full outline-none"
       type="text"
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       placeholder={field.placeholder}
-      style={{ ...defaultInputStyles, ...field.inputStyle }}
+      style={{ ...field.inputStyle }}
     />
   ),
 
@@ -66,10 +56,10 @@ const Fields = {
 
   select: ({ value, onChange, field }) => (
     <select
+      className="bg-gray-900 border border-gray-700 rounded text-white text-sm px-2 py-1 w-full outline-none"
       value={value || field.defaultValue}
       onChange={(e) => onChange(e.target.value)}
       style={{
-        ...defaultInputStyles,
         appearance: "none",
         paddingRight: "24px",
         ...field.inputStyle,
@@ -85,13 +75,14 @@ const Fields = {
 
   number: ({ value, onChange, field }) => (
     <input
+      className="bg-gray-900 border border-gray-700 rounded text-white text-sm px-2 py-1 w-full outline-none"
       type="number"
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       min={field.min}
       max={field.max}
       step={field.step}
-      style={{ ...defaultInputStyles, ...field.inputStyle }}
+      style={{ ...field.inputStyle }}
     />
   ),
 

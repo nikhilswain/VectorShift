@@ -92,112 +92,49 @@ export const BaseNode = ({ id, data, config }) => {
     return handles;
   };
 
-  // Custom render function support
-  const renderCustomContent = () => {
-    if (config.customRenderer) {
-      return config.customRenderer({
-        nodeState,
-        setNodeState,
-        handleFieldChange,
-        id,
-        data,
-        config,
-      });
-    }
-    return null;
-  };
-  const nodeStyle = {
-    width: config.width || 200,
-    height: config.height || "auto",
-    minHeight: config.minHeight || 80,
-    border: config.border || "1px solid rgb(55 65 81)",
-    borderRadius: config.borderRadius || "8px",
-    padding: config.padding || "12px",
-    backgroundColor: config.backgroundColor || "rgb(31 41 55)",
-    fontFamily: config.fontFamily || "inherit",
-    boxShadow:
-      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-    color: "white",
-    ...config.customStyles,
-  };
-
   return (
-    <div style={nodeStyle} className={config.className}>
+    <div
+      style={{ ...config.customStyles }}
+      className={`flow-nodes min-w-[240px] min-h-[80px] w-[200px] rounded-lg p-3 border border-gray-700 bg-gray-800 text-white shadow-md font-inherit ${
+        config.className || ""
+      }`}
+    >
       {renderHandles()}
 
-      {/* Custom content takes precedence */}
-      {config.customRenderer ? (
-        renderCustomContent()
-      ) : (
-        <>
-          {/* Header */}
-          {config.title && (
-            <div
-              style={{
-                fontWeight: "bold",
-                marginBottom: "4px",
-                color: config.headerColor || "black",
-                fontSize: config.headerSize || "14px",
-                ...config.headerStyle,
-              }}
-            >
-              {config.icon && (
-                <span style={{ marginRight: "4px" }}>{config.icon}</span>
-              )}
-              {config.title}
-            </div>
-          )}
-
-          {/* Description */}
-          {config.description && (
-            <div
-              style={{
-                fontSize: "12px",
-                color: "#666",
-                marginBottom: "8px",
-                ...config.descriptionStyle,
-              }}
-            >
-              {config.description}
-            </div>
-          )}
-
-          {/* Fields */}
-          {config.fields?.map((field) => (
-            <div
-              key={field.key}
-              style={{
-                marginBottom: field.marginBottom || "4px",
-                ...field.containerStyle,
-              }}
-            >
-              {field.label && (
-                <label
-                  style={{
-                    fontSize: "12px",
-                    display: field.labelInline ? "inline-block" : "block",
-                    marginRight: field.labelInline ? "8px" : "0",
-                    ...field.labelStyle,
-                  }}
-                >
-                  {field.label}:
-                </label>
-              )}
-              <FieldRenderer
-                field={field}
-                value={nodeState[field.key]}
-                onChange={(value) => handleFieldChange(field.key, value)}
-                nodeState={nodeState}
-                setNodeState={setNodeState}
-              />
-            </div>
-          ))}
-
-          {/* Custom component after fields */}
-          {config.afterFields &&
-            config.afterFields({ nodeState, setNodeState, id })}
-        </>
+      {/* Header */}
+      {config.title && (
+        <div className="font-bold text-xl pb-2 border-b border-gray-700 mb-3">
+          {config.icon && <span className="mr-1">{config.icon}</span>}
+          {config.title}
+        </div>
       )}
+
+      {/* Description */}
+      {config.description && (
+        <div className="text-sm text-gray-400 -mt-2 mb-3">
+          {config.description}
+        </div>
+      )}
+
+      {/* Fields */}
+      {config.fields?.map((field) => (
+        <div key={field.key} className="mb-3">
+          {field.label && (
+            <label className="text-sm text-gray-300 mb-1">{field.label}:</label>
+          )}
+          <FieldRenderer
+            field={field}
+            value={nodeState[field.key]}
+            onChange={(value) => handleFieldChange(field.key, value)}
+            nodeState={nodeState}
+            setNodeState={setNodeState}
+          />
+        </div>
+      ))}
+
+      {/* Custom component after fields */}
+      {config.afterFields &&
+        config.afterFields({ nodeState, setNodeState, id })}
     </div>
   );
 };

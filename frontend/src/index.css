@@ -88,11 +88,6 @@ code {
   transition: all 0.2s ease;
 }
 
-.react-flow__handle:hover {
-  background-color: rgb(147 197 253) !important;
-  border-color: rgb(31 41 55) !important;
-}
-
 .react-flow__connection-path {
   stroke: rgb(96 165 250);
   stroke-width: 2;
@@ -111,3 +106,5 @@ code {
   background-color: rgb(31 41 55);
   color: white;
 }
+
+

@@ -4,17 +4,6 @@ import { createNode } from "../components/CreateNode";
 const nodeConfigs = {
   input: {
     title: "Input",
-    width: 240,
-    backgroundColor: "rgb(31 41 55)",
-    border: "1px solid rgb(55 65 81)",
-    borderRadius: "8px",
-    headerColor: "#fff",
-    headerStyle: {
-      fontSize: "14px",
-      paddingBottom: "8px",
-      borderBottom: "1px solid rgb(55 65 81)",
-      marginBottom: "12px",
-    },
     fields: [
       {
         key: "inputName",
@@ -38,17 +27,9 @@ const nodeConfigs = {
   llm: {
     title: "LLM",
     description: "This is a LLM.",
-    width: 240,
     backgroundColor: "rgb(31 41 55)",
     border: "1px solid rgb(55 65 81)",
     borderRadius: "8px",
-    headerColor: "#fff",
-    headerStyle: {
-      fontSize: "14px",
-      paddingBottom: "8px",
-      borderBottom: "1px solid rgb(55 65 81)",
-      marginBottom: "12px",
-    },
     descriptionStyle: {
       color: "rgb(156 163 175)",
       fontSize: "12px",
@@ -60,17 +41,9 @@ const nodeConfigs = {
   },
   output: {
     title: "Output",
-    width: 240,
     backgroundColor: "rgb(31 41 55)",
     border: "1px solid rgb(55 65 81)",
     borderRadius: "8px",
-    headerColor: "#fff",
-    headerStyle: {
-      fontSize: "14px",
-      paddingBottom: "8px",
-      borderBottom: "1px solid rgb(55 65 81)",
-      marginBottom: "12px",
-    },
     fields: [
       {
         key: "outputName",
@@ -94,19 +67,11 @@ const nodeConfigs = {
   text: {
     title: "Text",
     enhanced: true,
-    width: 240,
     backgroundColor: "rgb(31 41 55)",
     border: "1px solid rgb(55 65 81)",
     borderRadius: "8px",
-    headerColor: "#fff",
     padding: "12px",
     minHeight: 140,
-    headerStyle: {
-      fontSize: "14px",
-      paddingBottom: "8px",
-      borderBottom: "1px solid rgb(55 65 81)",
-      marginBottom: "12px",
-    },
     fields: [
       {
         key: "text",
@@ -115,11 +80,6 @@ const nodeConfigs = {
         rows: 3,
         placeholder: "Enter text with variables like {{variableName}}",
         marginBottom: "8px",
-        labelStyle: {
-          color: "rgb(209 213 219)",
-          marginBottom: "4px",
-          fontSize: "12px",
-        },
         inputStyle: {
           backgroundColor: "rgb(17 24 39)",
           border: "1px solid rgb(55 65 81)",
@@ -164,7 +124,6 @@ const extraNodesConfigs = {
   filter: {
     title: "Filter",
     icon: "🔍",
-    width: 240,
     borderRadius: "8px",
     fields: [
       {
@@ -338,7 +297,6 @@ const extraNodesConfigs = {
   },
 };
 
-// Create your original nodes using the new system
 export const InputNode = createNode(nodeConfigs.input);
 export const LLMNode = createNode(nodeConfigs.llm);
 export const OutputNode = createNode(nodeConfigs.output);
