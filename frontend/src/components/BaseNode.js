@@ -1,6 +1,6 @@
 // baseNode.js
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { Handle, Position } from "reactflow";
+import { Handle, Position, useUpdateNodeInternals } from "reactflow";
 import { FieldRenderer } from "./FieldRendrer";
 
 export const BaseNode = ({ id, data, config }) => {
@@ -36,10 +36,13 @@ export const BaseNode = ({ id, data, config }) => {
     });
   };
 
-  // Calculate handle positions
+  // Calculate handle positions with consistent spacing
   const calculateHandlePosition = (index, total) => {
     if (total === 1) return "50%";
-    return `${((index + 1) * 100) / (total + 1)}%`;
+    // Use a more predictable spacing that doesn't shift existing handles
+    const spacing = 60 / Math.max(total - 1, 1); // 60% of the node height divided by gaps
+    const startOffset = 20; // Start 20% from top
+    return `${startOffset + index * spacing}%`;
   };
 
   // Default handle styles
@@ -62,7 +65,7 @@ export const BaseNode = ({ id, data, config }) => {
           key={`input-${input.id}`}
           type="target"
           position={Position.Left}
-          id={`${id}-${input.id}`}
+          id={input.id} // Changed: Use just the input.id, not prefixed with node id
           style={{
             top: calculateHandlePosition(index, config.inputs.length),
             ...defaultHandleStyle,
@@ -79,7 +82,7 @@ export const BaseNode = ({ id, data, config }) => {
           key={`output-${output.id}`}
           type="source"
           position={Position.Right}
-          id={`${id}-${output.id}`}
+          id={output.id} // Changed: Use just the output.id, not prefixed with node id
           style={{
             top: calculateHandlePosition(index, config.outputs.length),
             ...defaultHandleStyle,
@@ -147,6 +150,9 @@ export const EnhancedTextNode = ({ id, data, config }) => {
     height: "auto",
   });
 
+  // Import the hook to update node internals
+  const updateNodeInternals = useUpdateNodeInternals();
+
   const extractVariables = useCallback((text) => {
     if (!text) return [];
     const variableRegex = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\}\}/g;
@@ -156,43 +162,74 @@ export const EnhancedTextNode = ({ id, data, config }) => {
       variables.add(match[1].trim());
     }
     return Array.from(variables);
-  }, []); // Initialize dynamic inputs from initial data and handle updates
+  }, []);
+
+  // Initialize dynamic inputs from initial data and handle updates
   useEffect(() => {
     if (data?.text) {
       const variables = extractVariables(data.text);
-      setDynamicInputs(
-        variables.map((varName) => ({
-          id: varName,
-          label: varName,
-          style: {
-            backgroundColor: "#60a5fa",
-            border: "3px solid rgb(31 41 55)",
-          },
-        }))
-      );
+      // Sort variables to maintain consistent order
+      const sortedVariables = variables.sort();
+      const newInputs = sortedVariables.map((varName) => ({
+        id: varName, // Just use the variable name as ID
+        label: varName,
+        style: {
+          backgroundColor: "#60a5fa",
+          border: "3px solid rgb(31 41 55)",
+        },
+      }));
+
+      // Only update if inputs actually changed (compare sorted arrays)
+      const currentIds = dynamicInputs.map((input) => input.id).sort();
+      const newIds = sortedVariables;
+      const inputsChanged =
+        JSON.stringify(currentIds) !== JSON.stringify(newIds);
+
+      if (inputsChanged) {
+        setDynamicInputs(newInputs);
+        // Force ReactFlow to update node internals after state change
+        setTimeout(() => updateNodeInternals(id), 0);
+        sessionStorage.setItem("nodesChanged", "true");
+        sessionStorage.setItem("nodesChanged", "false");
+      }
+    } else if (dynamicInputs.length > 0) {
+      setDynamicInputs([]);
+      setTimeout(() => updateNodeInternals(id), 0);
     }
-  }, [data?.text, extractVariables]); // Update when text or extractVariables changes
+  }, [data?.text, extractVariables, id, updateNodeInternals, dynamicInputs]);
 
   // Handle text changes and update dynamic inputs
   const handleTextChange = useCallback(
     (value) => {
       if (data) {
         data.text = value;
-        // Immediately update dynamic inputs
+        // Extract variables and update inputs
         const variables = extractVariables(value);
-        setDynamicInputs(
-          variables.map((varName) => ({
-            id: varName,
-            label: varName,
-            style: {
-              backgroundColor: "#60a5fa",
-              border: "3px solid rgb(31 41 55)",
-            },
-          }))
-        );
+        // Sort variables to maintain consistent order
+        const sortedVariables = variables.sort();
+        const newInputs = sortedVariables.map((varName) => ({
+          id: varName,
+          label: varName,
+          style: {
+            backgroundColor: "#60a5fa",
+            border: "3px solid rgb(31 41 55)",
+          },
+        }));
+
+        // Check if inputs changed before updating (compare sorted arrays)
+        const currentIds = dynamicInputs.map((input) => input.id).sort();
+        const newIds = sortedVariables;
+        const inputsChanged =
+          JSON.stringify(currentIds) !== JSON.stringify(newIds);
+
+        if (inputsChanged) {
+          setDynamicInputs(newInputs);
+          // Update ReactFlow internals after a short delay to ensure state is updated
+          setTimeout(() => updateNodeInternals(id), 10);
+        }
       }
     },
-    [data, extractVariables]
+    [data, extractVariables, id, updateNodeInternals, dynamicInputs]
   );
 
   const handleResize = useCallback(
@@ -229,6 +266,7 @@ export const EnhancedTextNode = ({ id, data, config }) => {
   const enhancedConfig = useMemo(
     () => ({
       ...config,
+      // Combine static inputs with dynamic inputs
       inputs: [...(config.inputs || []), ...dynamicInputs],
       width: nodeSize.width,
       height: nodeSize.height,

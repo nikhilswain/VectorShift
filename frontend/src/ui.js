@@ -111,10 +111,12 @@ export const PipelineUI = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
+
   return (
     <div className="absolute inset-0 bg-gray-950">
       <div ref={reactFlowWrapper} className="w-full h-full">
         <ReactFlow
+          key={`${nodes.length}-${edges.length}`}
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
