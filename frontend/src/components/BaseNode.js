@@ -1,5 +1,5 @@
 // baseNode.js
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { Handle, Position } from "reactflow";
 import { FieldRenderer } from "./FieldRendrer";
 
@@ -156,30 +156,43 @@ export const EnhancedTextNode = ({ id, data, config }) => {
       variables.add(match[1].trim());
     }
     return Array.from(variables);
-  }, []);
+  }, []); // Initialize dynamic inputs from initial data and handle updates
+  useEffect(() => {
+    if (data?.text) {
+      const variables = extractVariables(data.text);
+      setDynamicInputs(
+        variables.map((varName) => ({
+          id: varName,
+          label: varName,
+          style: {
+            backgroundColor: "#60a5fa",
+            border: "3px solid rgb(31 41 55)",
+          },
+        }))
+      );
+    }
+  }, [data?.text, extractVariables]); // Update when text or extractVariables changes
 
+  // Handle text changes and update dynamic inputs
   const handleTextChange = useCallback(
     (value) => {
-      const variables = extractVariables(value);
-      setDynamicInputs((prevInputs) => {
-        const currentVars = prevInputs.map((i) => i.id);
-        if (
-          JSON.stringify(variables.sort()) !==
-          JSON.stringify(currentVars.sort())
-        ) {
-          return variables.map((varName) => ({
+      if (data) {
+        data.text = value;
+        // Immediately update dynamic inputs
+        const variables = extractVariables(value);
+        setDynamicInputs(
+          variables.map((varName) => ({
             id: varName,
             label: varName,
             style: {
               backgroundColor: "#60a5fa",
               border: "3px solid rgb(31 41 55)",
             },
-          }));
-        }
-        return prevInputs;
-      });
+          }))
+        );
+      }
     },
-    [extractVariables]
+    [data, extractVariables]
   );
 
   const handleResize = useCallback(
